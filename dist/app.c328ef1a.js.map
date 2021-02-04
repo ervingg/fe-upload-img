@@ -1,0 +1,1 @@
+{"version":3,"sources":["app.js"],"names":["console","log"],"mappings":";;AAAA;;AAEAA,OAAO,CAACC,GAAR,CAAY,IAAZ","file":"app.c328ef1a.js","sourceRoot":"..","sourcesContent":["import './upload';\r\n\r\nconsole.log('qw');"]}

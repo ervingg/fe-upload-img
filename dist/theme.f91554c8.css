@@ -1,0 +1,49 @@
+body {
+   background: #666666;
+   font-family: Roboto, sans-serif;
+}
+
+.container  {
+   margin: 0 auto;
+   padding-top: 5rem;
+   width: 800px;
+}
+
+.card {
+   border-radius: 6px;
+   background: #fff;
+   padding: 1rem;
+   box-shadow: 2px 3px 10px rgba(0,0,0,.2);
+}
+
+.btn {
+   color: #42b983;
+   position: relative;
+   border-radius:  99px;
+   border: 1px solid #42b983;
+   text-decoration: none;
+   text-transform: uppercase;
+   padding: 0.5rem 1.5rem;
+   font-weight: 700;
+   outline: none;
+   background: #ffffff;
+   transition: all .2s;
+   cursor: pointer;
+   margin-right: 1rem;
+}
+
+.btn.primary {
+   background: #42b893;
+   color: #fff;
+}
+
+.btn:active {
+   box-shadow: inset 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.btn:hover {
+   cursor: pointer;
+   opacity: .8;
+}
+
+/*# sourceMappingURL=/theme.f91554c8.css.map */
