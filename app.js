@@ -1,3 +1,6 @@
-import './upload';
+import {upload} from './upload';
 
-console.log('qw');
+upload('#file', {
+   multi: true,
+   accept: ['.png', '.jpeg', 'jpg', '.svg', '.gif']
+});

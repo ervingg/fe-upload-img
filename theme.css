@@ -45,3 +45,75 @@ body {
    cursor: pointer;
    opacity: .8;
 }
+
+input[type=file] {
+   display: none;
+}
+
+.preview {
+   display: flex;
+   flex-wrap: wrap;
+   padding: 0.5rem;
+}
+
+.preview-img {
+   position: relative;
+   margin: .3rem;
+   overflow: hidden;
+}
+
+.preview-img:hover .preview-remove {
+   opacity: 1;
+}
+
+.preview-img:hover .preview-info {
+   bottom: 4px;
+   opacity: 1;
+}
+
+.preview-img img {
+   width: 180px;
+   height: 94px;
+}
+
+.preview-remove {
+   width: 20px;
+   height: 20px;
+   position: absolute;
+   top: 0;
+   right: 0;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   opacity: 0;
+   transition: opacity .2s;
+   font-weight: 900;
+   background: rgba(255, 255, 255, .5);
+   cursor: pointer;
+}
+
+.preview-info {
+   opacity: 0;
+   height: 24px;
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: -24px;
+   display: flex;
+   padding: 0 5px;
+   align-items: center;
+   justify-content: space-between;
+   transition: bottom .2s;
+   font-size: .8rem;
+   background: rgba(255, 255, 255, .5);
+}
+
+.preview-info span {
+   width: 50%;
+   height: 19px;
+   overflow: hidden;
+}
+
+.preview-info span:nth-child(2) {
+   text-align: right;
+}
