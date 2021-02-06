@@ -6,7 +6,7 @@ body {
 .container  {
    margin: 0 auto;
    padding-top: 5rem;
-   width: 800px;
+   width: 850px;
 }
 
 .card {
@@ -57,9 +57,18 @@ input[type=file] {
 }
 
 .preview-img {
+   width: 180px;
+   max-height: 180px;
+   overflow: hidden;
    position: relative;
    margin: .3rem;
    overflow: hidden;
+   border: 2px solid #89aca1;
+}
+
+.preview-img.removing {
+   transform: scale(0);
+   transition: transform .1s;
 }
 
 .preview-img:hover .preview-remove {
@@ -67,13 +76,12 @@ input[type=file] {
 }
 
 .preview-img:hover .preview-info {
-   bottom: 4px;
+   bottom: 0px;
    opacity: 1;
 }
 
 .preview-img img {
-   width: 180px;
-   height: 94px;
+   width: 100%;
 }
 
 .preview-remove {
@@ -110,10 +118,21 @@ input[type=file] {
 
 .preview-info span {
    width: 50%;
-   height: 19px;
+   height: 15px;
    overflow: hidden;
 }
 
 .preview-info span:nth-child(2) {
    text-align: right;
+}
+
+.preview-info-progress {
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   background: #42b983;
+   text-align: center;
+   transition: width .2s;
+   width: 30%;
 }

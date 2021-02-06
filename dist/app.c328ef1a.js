@@ -125,6 +125,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.upload = upload;
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function bytesToSize(bytes) {
   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 
@@ -136,14 +148,33 @@ function bytesToSize(bytes) {
   return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
 }
 
+var element = function element(tag, classes, content) {
+  var node = document.createElement(tag);
+
+  if (classes.length) {
+    var _node$classList;
+
+    (_node$classList = node.classList).add.apply(_node$classList, _toConsumableArray(classes));
+  }
+
+  if (content) {
+    node.textContent = content;
+  }
+
+  return node;
+};
+
+function noop() {}
+
 function upload(selector) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var files = [];
+  var onUpload = options.onUpload || noop;
   var input = document.querySelector(selector);
-  var preview = document.createElement('div');
-  preview.classList.add('preview');
-  var btnOpen = document.createElement('button');
-  btnOpen.classList.add('btn');
-  btnOpen.textContent = 'Open';
+  var preview = element('div', ['preview']);
+  var btnOpen = element('button', ['btn'], 'Open');
+  var btnUpload = element('button', ['btn', 'primary'], 'Upload');
+  btnUpload.style.display = 'none';
 
   if (options.multi) {
     input.setAttribute('multiple', true);
@@ -153,8 +184,9 @@ function upload(selector) {
     input.setAttribute('accept', options.accept.join(','));
   }
 
-  input.insertAdjacentElement('afterend', btnOpen);
   input.insertAdjacentElement('afterend', preview);
+  input.insertAdjacentElement('afterend', btnUpload);
+  input.insertAdjacentElement('afterend', btnOpen);
 
   var triggerInput = function triggerInput() {
     return input.click();
@@ -165,8 +197,9 @@ function upload(selector) {
       return;
     }
 
-    var files = Array.from(event.target.files);
+    files = Array.from(event.target.files);
     preview.innerHTML = '';
+    btnUpload.style.display = 'inline';
     files.forEach(function (file) {
       if (!file.type.match('image')) {
         return;
@@ -176,15 +209,62 @@ function upload(selector) {
 
       reader.onload = function (e) {
         var src = e.target.result;
-        preview.insertAdjacentHTML('afterbegin', "\n               <div class=\"preview-img\">\n                  <div class=\"preview-remove\">&times;</div>\n                  <img src=\"".concat(src, "\" alt=\"").concat(file.name, "\" />\n                  <div class=\"preview-info\">\n                     <span>").concat(file.name, "</span>\n                     <span>").concat(bytesToSize(file.size), "</span>\n                  </div>\n               </div>\n            "));
+        var shortName;
+
+        if (file.name.length >= 10) {
+          shortName = "".concat(file.name.slice(0, 10), "...");
+        }
+
+        preview.insertAdjacentHTML('afterbegin', "\n               <div class=\"preview-img\">\n                  <div class=\"preview-remove\" data-name=\"".concat(file.name, "\">&times;</div>\n                  <img src=\"").concat(src, "\" alt=\"").concat(file.name, "\" />\n                  <div class=\"preview-info\">\n                     <span>").concat(shortName || file.name, "</span>\n                     <span>").concat(bytesToSize(file.size), "</span>\n                  </div>\n               </div>\n            "));
       };
 
       reader.readAsDataURL(file);
     });
   };
 
+  var removeHandler = function removeHandler(event) {
+    if (!event.target.dataset.name) {
+      return;
+    }
+
+    var name = event.target.dataset.name;
+    files = files.filter(function (file) {
+      return file.name !== name;
+    });
+
+    if (!files.length) {
+      btnUpload.style.display = 'none';
+    }
+
+    var block = preview.querySelector("[data-name=\"".concat(name, "\"]")).closest('.preview-img');
+    console.log(block);
+    block.classList.add('removing');
+    setTimeout(function () {
+      block.remove();
+    }, 300);
+  };
+
+  var clearPreview = function clearPreview(el) {
+    el.style.bottom = '0px';
+    el.style.opacity = '1';
+    el.innerHTML = '<div class="preview-info-progress"></div>';
+  };
+
+  var uploadHandler = function uploadHandler() {
+    preview.querySelectorAll('.preview-remove').forEach(function (e) {
+      return e.remove();
+    });
+    var previewInfo = preview.querySelectorAll('.preview-info');
+    previewInfo.forEach(clearPreview);
+    onUpload(files);
+  };
+
   btnOpen.addEventListener('click', triggerInput);
+  btnUpload.addEventListener('click', uploadHandler);
   input.addEventListener('change', changeHandler);
+  preview.addEventListener('click', function (event) {
+    return removeHandler(event);
+  });
 }
 },{}],"app.js":[function(require,module,exports) {
 "use strict";
@@ -193,7 +273,8 @@ var _upload = require("./upload");
 
 (0, _upload.upload)('#file', {
   multi: true,
-  accept: ['.png', '.jpeg', 'jpg', '.svg', '.gi']
+  accept: ['.png', '.jpeg', 'jpg', '.svg', '.gif'],
+  onUpload: function onUpload(files) {}
 });
 },{"./upload":"upload.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -223,7 +304,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51243" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49617" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
