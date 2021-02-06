@@ -127,14 +127,16 @@ input[type=file] {
 }
 
 .preview-info-progress {
+   display: flex;
+   align-items: center;
+   justify-content: center;
    position: absolute;
    top: 0;
    left: 0;
    bottom: 0;
    background: #42b983;
-   text-align: center;
    transition: width .2s;
-   width: 30%;
+   font-weight: 900;
 }
 
 /*# sourceMappingURL=/theme.f91554c8.css.map */
